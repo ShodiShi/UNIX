@@ -2,20 +2,20 @@
 #include <pthread.h>
 #include <unistd.h>
 
-pthread_cond_t cond1 = PTHREAD_COND_INITIALIZER;   // Условная переменная
-pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;  // Мьютекс для синхронизации
-int ready = 0;                                     // Флаг готовности данных
+pthread_cond_t cond1 = PTHREAD_COND_INITIALIZER;   
+pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;  
+int ready = 0;                                     
 
 // Функция поставщика
 void* supplier(void* arg) {
     while (1) {
-        pthread_mutex_lock(&lock);    // Захват мьютекса
+        pthread_mutex_lock(&lock);    а
         if (ready == 1) {
-            pthread_mutex_unlock(&lock);  // Если данные уже готовы, отпускаем мьютекс и продолжаем
+            pthread_mutex_unlock(&lock);  
             continue;
         }
 
-        ready = 1;   // Устанавливаем флаг готовности
+        ready = 1;   
         printf("Provided\n");
 
         pthread_cond_signal(&cond1);  
@@ -29,17 +29,17 @@ void* supplier(void* arg) {
 // Функция потребителя
 void* consumer(void* arg) {
     while (1) {
-        pthread_mutex_lock(&lock);    // Захват мьютекса
-        while (ready == 0) {          // Ожидание, пока данные не будут готовы
-            pthread_cond_wait(&cond1, &lock);  // Освобождаем мьютекс и ждем сигнала
+        pthread_mutex_lock(&lock);    
+        while (ready == 0) {          
+            pthread_cond_wait(&cond1, &lock);  
         }
 
-        ready = 0;   // Сбрасываем флаг после потребления данных
+        ready = 0;   
         printf("Consumed\n");
 
         pthread_mutex_unlock(&lock);  
 
-        sleep(2);  // Имитация времени обработки данных
+        sleep(2);  
     }
     return NULL;
 }
@@ -56,4 +56,5 @@ int main() {
     pthread_join(consumer_thread, NULL);
 
     return 0;
+
 }
